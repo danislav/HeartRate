@@ -4,7 +4,7 @@
 
 I wanted to try a cheap heart rate monitor which is usb connected.
 After some digging I found one on the ali express site: "Computer Earlobe Finger Clip USB Heart Rate Monitor" or "IR Finger Clip Sensor USB Heart Rate Monitor"
-Just search and you'll find them in many sites. Like this: https://www.aliexpress.com/item/Computer-Earlobe-Clip-USB-Heart-Rate-Monitor/1224317337.html
+Just search and you'll find them in many sites. /Links at the end/
 It is a simple ear/finger clip which is connected to a small box, which is connected to your computer via usb.
 It measures your blood flow difference with an infra-red sensor.
 
