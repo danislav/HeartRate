@@ -24,7 +24,7 @@ The script will try to scan for all the available HID devices and find the vID a
 Edit the script to fit your needs.  
 In my case it is: `FITCARE RC700(vID=0x1130, pID=0x6837)`.  
 The output is on the screen and also in a text file called hrm.txt  
-Use the text file when you stream with OBS your cool gaming sessions and show the world how your hard goes wild when you do the play of the game :)  
+Use the text file when you stream with OBS your cool gaming sessions and show the world how your heart goes wild when you do the play of the game :)  
 
 Press any key while the app window is focused to quit.
 
