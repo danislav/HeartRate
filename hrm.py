@@ -6,23 +6,42 @@
 Handling raw data inputs example transformed in Heart Rate Monitor reader.
 """
 import time
+import datetime
 from time import sleep
 from msvcrt import kbhit
 import pywinusb.hid as hid
 
+## Change the values bellow to fit your needs
 # Device to search for:
 hrmvendor_id = "1130"
 hrmproduct_id = "6837"
+# How many past values to use for the Average calculation
+calcLast = 5
+## Change the values above to fit your needs
 
+# When was the max BPM measured and what was the value
+maxBPM = 0
+maxBPMTime = time.time()
+
+# How many measurments have we made
+index = 0
+
+# Initialize the array for the last values
+lastValues = []
+for x in range(0, calcLast):
+    lastValues.insert(x,50)
+
+progressSymbol = ['.','o',]
 lastTime = time.time()
 
 def hrm_handler(data):
-    global lastTime
+    global lastTime, maxBPM, maxBPMTime, index, lastValues
     # If you need to debug, uncomment the next row to see the raw data
     # print("Raw: {0}".format(data))
     # The 4th column /data[3]/ gives me a value which I use to determine the pulse type. Seems like 2 and above are reliable.
     # But when I speak and my ears move /yes I have big ears/ it detects it and sends events with 0 and 1. So I gues high numbers is reliable and low - not. We have to filter out > 0.
     if data[3] > 0:
+        index+= 1
         diffTime = time.time() - lastTime
         #print(diffTime)
         lastTime = time.time()
@@ -30,15 +49,40 @@ def hrm_handler(data):
         # Calculate the beats per minute:
         perSecond = 1/diffTime
         perMinute = int(round(perSecond*60,0))
-        # If you moved a lot and lots of events were filtered the calculated BPM would be too low. So filter:
+        # If you moved a lot and lots of events were filtered the calculated BPM would be too low. 
+        # Also the new measured BPM will be much higher than the last.
+        # So filter:
+        averageIndex = index % calcLast
         if perMinute > 50:
+            lastValues[averageIndex] = perMinute
+            perMinuteAvg = int(sum(lastValues)/len(lastValues))
+            if perMinuteAvg >  maxBPM and index > calcLast*2 and perMinute < perMinuteAvg*1.5:
+                maxBPM = perMinute
+                maxBPMTime = time.time()
+            secondsAgo = int(time.time() - maxBPMTime)
+            #m, s = divmod(secondsAgo, 60)
+            #h, m = divmod(m, 60)
+            timeAgo = str(datetime.timedelta(seconds=secondsAgo))
             # I also print the 5th and 6th values... some day I will figure out what are those :D
-            print(perMinute, " BPM, ", data[3], data[4], data[5], "                         ",end='\r')
-            # sys.stdout.flush()
+            print(progressSymbol[index%len(progressSymbol)], perMinuteAvg, "BPM Avg, Current:", perMinute, "Max BPM:", maxBPM, "Measured", timeAgo, "ago. ", "RAW data: ", data[3], data[4], data[5],"                                  ", lastValues, end='\r')
+            sys.stdout.flush()
             
-            # Put this to a text file so we can use OBS
-            obsFile = open("hrm.txt","w")
-            obsFile.write(str(perMinute))
+            # Put this to text files so we can use OBS
+            # Current BPM
+            obsFile = open("hrmNow.txt","w")
+            obsFile.write(str(perMinuteAvg))
+            obsFile.close
+            # Max measured BPM
+            obsFile = open("hrmMax.txt","w")
+            obsFile.write(str(maxBPM))
+            obsFile.close
+            # When was the max measuered in seconds ago
+            obsFile = open("hrmMaxTimeAgo.txt","w")
+            obsFile.write(str(timeAgo))
+            obsFile.close
+            # Some moving symbos to know if the measurment is going on
+            obsFile = open("hrmTickAnimation.txt","w")
+            obsFile.write(str(progressSymbol[index%len(progressSymbol)]))
             obsFile.close
             
             # It would be also nice to serve this via some http port... so we can combine the Heart rates of several players in one output and put it online.
