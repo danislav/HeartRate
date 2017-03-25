@@ -48,7 +48,7 @@ HRM2101, Zencro, `USB\VID_1130&PID_6837&REV_0100`, `VID_1130&PID_6837`, FITCARE 
 
 ## Referral
 
-If you find this useful and you will buys something soon, please use the referral links so I can earn some points and buy gadgets :)  
+If you find this useful and you will buy something soon, please use the referral links so I can earn some points and buy some gadgets :)  
 Thank you!  
 - The Heart Rate sensor links: http://s.click.aliexpress.com/e/r7qB2nu http://s.click.aliexpress.com/e/NbEi27Y
 - AliExpress referral link: http://s.click.aliexpress.com/e/jiI66M3 
