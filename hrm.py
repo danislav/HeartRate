@@ -16,12 +16,14 @@ import pywinusb.hid as hid
 hrmvendor_id = "1130"
 hrmproduct_id = "6837"
 # How many past values to use for the Average calculation
-calcLast = 5
+calcLast = 10
 ## Change the values above to fit your needs
 
 # When was the max BPM measured and what was the value
 maxBPM = 0
 maxBPMTime = time.time()
+stressTime = time.time()
+stressStr = " "
 
 # How many measurments have we made
 index = 0
@@ -31,11 +33,11 @@ lastValues = []
 for x in range(0, calcLast):
     lastValues.insert(x,50)
 
-progressSymbol = ['.','o',]
+progressSymbol = ['.',':']
 lastTime = time.time()
 
 def hrm_handler(data):
-    global lastTime, maxBPM, maxBPMTime, index, lastValues
+    global lastTime, maxBPM, maxBPMTime, stressTime, stressStr, index, lastValues
     # If you need to debug, uncomment the next row to see the raw data
     # print("Raw: {0}".format(data))
     # The 4th column /data[3]/ gives me a value which I use to determine the pulse type. Seems like 2 and above are reliable.
@@ -56,15 +58,24 @@ def hrm_handler(data):
         if perMinute > 50:
             lastValues[averageIndex] = perMinute
             perMinuteAvg = int(sum(lastValues)/len(lastValues))
-            if perMinuteAvg >  maxBPM and index > calcLast*2 and perMinute < perMinuteAvg*1.5:
+            if perMinuteAvg >  maxBPM and index > calcLast*2 and perMinute < perMinuteAvg*2:
                 maxBPM = perMinute
                 maxBPMTime = time.time()
-            secondsAgo = int(time.time() - maxBPMTime)
+            # The diff between these two columns, in my case, stays normally at 44. When I breath heavy or stop it goed upto 200 and back to 44.
+            # So, I'll read this as some kind of a stress
+            if abs(data[4]-data[5]) > 100:
+                stressTime = time.time()
+                stressStr = "!"
+            else:
+                stressStr = " "
+            secondsAgoStress = int(time.time() - stressTime)
+            secondsAgoMax = int(time.time() - maxBPMTime)
             #m, s = divmod(secondsAgo, 60)
             #h, m = divmod(m, 60)
-            timeAgo = str(datetime.timedelta(seconds=secondsAgo))
+            timeAgoStress = str(datetime.timedelta(seconds=secondsAgoStress))
+            timeAgoMax = str(datetime.timedelta(seconds=secondsAgoMax))
             # I also print the 5th and 6th values... some day I will figure out what are those :D
-            print(progressSymbol[index%len(progressSymbol)], perMinuteAvg, "BPM Avg, Current:", perMinute, "Max BPM:", maxBPM, "Measured", timeAgo, "ago. ", "RAW data: ", data[3], data[4], data[5],"                                  ", lastValues, end='\r')
+            print(progressSymbol[index%len(progressSymbol)], perMinuteAvg, "BPM Avg, Current:", perMinute, "Max BPM:", maxBPM, ",", timeAgoMax, "ago. Last stress was", timeAgoStress, "ago. RAW data: ", data[3], data[4], data[5], abs(data[4]-data[5]), "                                  ", end='\r')
             sys.stdout.flush()
             
             # Put this to text files so we can use OBS
@@ -76,13 +87,27 @@ def hrm_handler(data):
             obsFile = open("hrmMax.txt","w")
             obsFile.write(str(maxBPM))
             obsFile.close
-            # When was the max measuered in seconds ago
+            # When was the max BPM measuered
             obsFile = open("hrmMaxTimeAgo.txt","w")
-            obsFile.write(str(timeAgo))
+            obsFile.write(str(timeAgoMax))
+            obsFile.close
+            # Indicate stress so we can visualize it in OBS
+            obsFile = open("hrmStress.txt","w")
+            obsFile.write(str(stressStr))
+            obsFile.close
+            # When was the stress measuered
+            obsFile = open("hrmStressTimeAgo.txt","w")
+            obsFile.write(str(timeAgoStress))
             obsFile.close
             # Some moving symbos to know if the measurment is going on
             obsFile = open("hrmTickAnimation.txt","w")
             obsFile.write(str(progressSymbol[index%len(progressSymbol)]))
+            obsFile.close
+            # Histrory data
+            obsFile = open("hrmHistory.csv","a")
+            colData = [time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time.time())), str(perMinuteAvg), str(data[3]), str(data[4]), str(data[5]), str(abs(data[4]-data[5]))]
+            rowData = ','.join(map(str, colData))
+            obsFile.write(str(rowData) + "\n")
             obsFile.close
             
             # It would be also nice to serve this via some http port... so we can combine the Heart rates of several players in one output and put it online.
@@ -151,4 +176,3 @@ if __name__ == '__main__':
         import codecs
         sys.stdout = codecs.getwriter('mbcs')(sys.stdout)
     raw_test()
-
