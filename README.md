@@ -23,8 +23,9 @@ Start the script `py hrm.py`
 The script will try to scan for all the available HID devices and find the vID and pID.  
 Edit the script to fit your needs.  
 In my case it is: `FITCARE RC700(vID=0x1130, pID=0x6837)`.  
-The output is on the screen and also in a text file called hrm.txt  
-Use the text file when you stream with OBS your cool gaming sessions and show the world how your heart goes wild when you do the play of the game :)  
+The output is on the screen and also in several text files. Check out the file names in the code.
+There is also a file with the history data if you want to use it to draw a graph: hrmHistory.csv  
+Use the text files when you stream with OBS your cool gaming sessions and show the world how your heart goes wild when you do the play of the game :) I have a sample video here: https://www.youtube.com/watch?v=CnmkX2RTCeI
 
 Press any key while the app window is focused to quit.
 
