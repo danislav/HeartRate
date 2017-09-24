@@ -16,6 +16,10 @@ I just edited the raw_hid example.
 Home page: https://github.com/rene-aguirre/pywinusb  
 Pypi info page: https://pypi.python.org/pypi/pywinusb/  
 
+If you are new and have no idea how python and stuff works:
+1. Download python 3 and install it from https://www.python.org/downloads/windows/
+1. Once you have python installed, install pywinusb: `py -3 -m pip install pywinusb`
+1. Clone HeartRate repository to your computer
 
 ## How to use it
 
@@ -25,6 +29,7 @@ Edit the script to fit your needs.
 In my case it is: `FITCARE RC700(vID=0x1130, pID=0x6837)`.  
 The output is on the screen and also in several text files. Check out the file names in the code.
 There is also a file with the history data if you want to use it to draw a graph: hrmHistory.csv  
+If you set the youtube captions variable the app will also post the hear rate as captions to the youtube live stream.
 Use the text files when you stream with OBS your cool gaming sessions and show the world how your heart goes wild when you do the play of the game :) I have a sample video here: https://www.youtube.com/watch?v=CnmkX2RTCeI
 
 Press any key while the app window is focused to quit.
@@ -52,7 +57,7 @@ HRM2101, Zencro, `USB\VID_1130&PID_6837&REV_0100`, `VID_1130&PID_6837`, FITCARE 
 If you find this useful and you will buy something soon, please use the referral links so I can earn some points and buy some gadgets :)  
 Thank you!  
 - The Heart Rate sensor links: http://s.click.aliexpress.com/e/r7qB2nu http://s.click.aliexpress.com/e/NbEi27Y
-- AliExpress referral link: http://s.click.aliexpress.com/e/jiI66M3 
+- AliExpress referral link: http://s.click.aliexpress.com/e/jiI66M3
 - Amazon.com referral link: https://www.amazon.com/b?_encoding=UTF8&tag=kostenurka-20&linkCode=ur2&linkId=408218eac4ebd2edd28b9e25128647b5&camp=1789&creative=9325&node=172282
 - Amazon.co.uk referral link: https://www.amazon.co.uk/b?node=560798&tag=danislaughb0f-21&camp=4258&creative=29374&linkCode=ur1&adid=1YB32625ES28835P7AY6
 - Amazon.es enlace: https://www.amazon.es/b?_encoding=UTF8&camp=3626&creative=24790&linkCode=ur2&node=599370031&site-redirect=&tag=danislaughblo-21

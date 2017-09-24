@@ -47,11 +47,11 @@ def hrm_handler(data):
         diffTime = time.time() - lastTime
         #print(diffTime)
         lastTime = time.time()
-        # Ok, so we have the time difference between two beats. 
+        # Ok, so we have the time difference between two beats.
         # Calculate the beats per minute:
         perSecond = 1/diffTime
         perMinute = int(round(perSecond*60,0))
-        # If you moved a lot and lots of events were filtered the calculated BPM would be too low. 
+        # If you moved a lot and lots of events were filtered the calculated BPM would be too low.
         # Also the new measured BPM will be much higher than the last.
         # So filter:
         averageIndex = index % calcLast
@@ -77,7 +77,7 @@ def hrm_handler(data):
             # I also print the 5th and 6th values... some day I will figure out what are those :D
             print(progressSymbol[index%len(progressSymbol)], perMinuteAvg, "BPM Avg, Current:", perMinute, "Max BPM:", maxBPM, ",", timeAgoMax, "ago. Last stress was", timeAgoStress, "ago. RAW data: ", data[3], data[4], data[5], abs(data[4]-data[5]), "                                  ", end='\r')
             sys.stdout.flush()
-            
+
             # Put this to text files so we can use OBS
             # Current BPM
             obsFile = open("hrmNow.txt","w")
@@ -109,10 +109,12 @@ def hrm_handler(data):
             rowData = ','.join(map(str, colData))
             obsFile.write(str(rowData) + "\n")
             obsFile.close
-            
+            # Youtube closed captions
+            # Check if the env variable is set and use the URL to post the captions to Youtube
+
             # It would be also nice to serve this via some http port... so we can combine the Heart rates of several players in one output and put it online.
-    
-    
+
+
 
 def raw_test():
     # simple test
